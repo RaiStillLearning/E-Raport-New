@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import {
   Table,
   Button,
@@ -32,14 +32,29 @@ const LingkupMateri: React.FC = () => {
   const [newTujuan, setNewTujuan] = useState("");
   const [adding, setAdding] = useState(false);
 
+  // Disable horizontal scroll di body supaya gak geser ke kanan/kiri
+  useEffect(() => {
+    document.body.style.overflowX = "hidden";
+    // mencegah overscroll glitch di mobile
+    document.body.style.overscrollBehaviorX = "contain";
+
+    return () => {
+      document.body.style.overflowX = "";
+      document.body.style.overscrollBehaviorX = "";
+    };
+  }, []);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get("http://localhost:5000/Lingkupmateri");
       setData(res.data.data || res.data);
-    } catch {
-      setError("Gagal mengambil data");
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      setError(
+        axiosError.response?.data?.message || "Gagal mengambil data dari server"
+      );
     } finally {
       setLoading(false);
     }
@@ -59,13 +74,17 @@ const LingkupMateri: React.FC = () => {
     try {
       const res = await axios.post("http://localhost:5000/Lingkupmateri", {
         tingkat: newTingkat,
-        lingkup_materi: newTujuan, // <-- ubah disini sesuai backend
+        lingkup_materi: newTujuan,
       });
       setData((prev) => [...prev, res.data.data || res.data]);
       setNewTingkat("");
       setNewTujuan("");
+      setShowAdd(false);
     } catch (err) {
-      alert("Gagal menambahkan data");
+      const axiosError = err as AxiosError;
+      alert(
+        axiosError.response?.data?.message || "Gagal menambahkan data"
+      );
     } finally {
       setAdding(false);
     }
@@ -133,7 +152,7 @@ const LingkupMateri: React.FC = () => {
       {/* Baris tombol tambah */}
       <Row className="mb-3 align-items-center">
         <Col xs={8} sm={10}>
-          <h3 className="m-0">Tujuan Pembelajaran</h3>
+          <h3 className="m-0">Lingkup Materi</h3>
         </Col>
         <Col xs={4} sm={2} className="text-end">
           <Button size="sm" onClick={() => setShowAdd(true)}>
@@ -143,13 +162,26 @@ const LingkupMateri: React.FC = () => {
       </Row>
 
       {/* Tabel responsif */}
-      <div style={{ overflowX: "auto" }}>
-        <Table striped bordered hover>
+      <div
+        className="responsive-table"
+        style={{
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+          // opsional styling scrollbar agar lebih tipis (khusus Firefox)
+          scrollbarWidth: "thin",
+        }}
+      >
+        <Table
+          striped
+          bordered
+          hover
+          style={{ tableLayout: "fixed", minWidth: 600, width: "100%" }}
+        >
           <thead>
             <tr>
               <th style={{ minWidth: 40 }}>NO</th>
               <th style={{ minWidth: 100 }}>TINGKAT</th>
-              <th style={{ minWidth: 200 }}>TUJUAN PEMBELAJARAN</th>
+              <th style={{ minWidth: 200 }}>Lingkup Materi</th>
               <th style={{ minWidth: 120 }}>AKSI</th>
             </tr>
           </thead>

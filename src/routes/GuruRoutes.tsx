@@ -5,6 +5,8 @@ import Refrensi from "../pages/guru/Refrensi";
 import PesertaDidik from "../pages/guru/PesertaDidik";
 import TujuanPembelajaran from "../pages/guru/TujuanPembelajaran";
 import LingkupMateri from "../pages/guru/LingkupMateri";
+import AsesmenSumatif from "../pages/guru/AsesmenSumatif";
+//nilai dropdown
 
 const GuruRoutes = () => {
   return (
@@ -14,6 +16,7 @@ const GuruRoutes = () => {
       <Route path="pesertadidik" element={<PesertaDidik />} />
       <Route path="tujuanPembelajaran" element={<TujuanPembelajaran />} />
       <Route path="lingkup-materi" element={<LingkupMateri/>}   />
+      <Route path="asesmen-sumatif" element={<AsesmenSumatif/>}/>
       {/* Tambah route lain untuk guru */}
     </>
   );

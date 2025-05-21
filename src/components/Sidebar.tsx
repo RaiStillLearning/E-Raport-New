@@ -14,6 +14,8 @@ const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownRefrensiOpen, setDropdownRefrensiOpen] = useState(false);
+  const [dropdownNilaiiOpen, setDropdownNilaiOpen] = useState(false);
+
   const location = useLocation();
 
   if (!userRole) return null;
@@ -37,11 +39,16 @@ const Sidebar = () => {
     { name: "Pengaturan", path: "/pengaturan" },
   ];
 
-  // Revisi path sesuai route yang kamu punya di GuruRoutes (camelCase tanpa strip)
   const dropdownRefrensiItems = [
     { name: "Peserta Didik", path: "/guru/pesertadidik" },
     { name: "Tujuan Pembelajaran", path: "/guru/tujuanPembelajaran" },
     { name: "Lingkup Materi", path: "/guru/lingkup-materi" },
+  ];
+
+  const dropdownNilaiItems = [
+    { name: "Asesmen Sumatif", path: "/guru/asesmen-sumatif" },
+    { name: "Asesmen Formatif", path: "/guru/asesmen-formatif" },
+    { name: "Nilai Akhir", path: "/guru/nilai-akhir" },
   ];
 
   const sidebarWidth = 220;
@@ -102,6 +109,32 @@ const Sidebar = () => {
                 <Collapse in={dropdownRefrensiOpen}>
                   <div id="refrensi-collapse">
                     {dropdownRefrensiItems.map((item) => (
+                      <Nav.Link
+                        as={Link}
+                        to={item.path}
+                        key={item.path}
+                        onClick={() => isMobile && setIsOpen(false)}
+                        className="text-white ms-3 mb-2"
+                      >
+                        {item.name}
+                      </Nav.Link>
+                    ))}
+                  </div>
+                </Collapse>
+
+                {/* Dropdown Nilai */}
+                <Button
+                  variant="link"
+                  className="text-white text-start"
+                  onClick={() => setDropdownNilaiOpen(!dropdownNilaiiOpen)}
+                  aria-controls="nilai-collapse"
+                  aria-expanded={dropdownNilaiiOpen}
+                >
+                  📊 Nilai ▼
+                </Button>
+                <Collapse in={dropdownNilaiiOpen}>
+                  <div id="nilai-collapse">
+                    {dropdownNilaiItems.map((item) => (
                       <Nav.Link
                         as={Link}
                         to={item.path}

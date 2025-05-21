@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import {
   Table,
   Button,
@@ -32,14 +32,29 @@ const TujuanPembelajaran: React.FC = () => {
   const [newTujuan, setNewTujuan] = useState("");
   const [adding, setAdding] = useState(false);
 
+  // Disable horizontal scroll di body supaya gak geser ke kanan/kiri
+  useEffect(() => {
+    document.body.style.overflowX = "hidden";
+    // mencegah overscroll glitch di mobile
+    document.body.style.overscrollBehaviorX = "contain";
+
+    return () => {
+      document.body.style.overflowX = "";
+      document.body.style.overscrollBehaviorX = "";
+    };
+  }, []);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await axios.get("http://localhost:5000/Tujuanpembelajaran");
       setData(res.data.data || res.data);
-    } catch {
-      setError("Gagal mengambil data");
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      setError(
+        axiosError.response?.data?.message || "Gagal mengambil data dari server"
+      );
     } finally {
       setLoading(false);
     }
@@ -59,13 +74,17 @@ const TujuanPembelajaran: React.FC = () => {
     try {
       const res = await axios.post("http://localhost:5000/Tujuanpembelajaran", {
         tingkat: newTingkat,
-        tujuan_pembelajaran: newTujuan, // <-- ubah disini sesuai backend
+        lingkup_materi: newTujuan,
       });
       setData((prev) => [...prev, res.data.data || res.data]);
       setNewTingkat("");
       setNewTujuan("");
+      setShowAdd(false);
     } catch (err) {
-      alert("Gagal menambahkan data");
+      const axiosError = err as AxiosError;
+      alert(
+        axiosError.response?.data?.message || "Gagal menambahkan data"
+      );
     } finally {
       setAdding(false);
     }
@@ -102,7 +121,7 @@ const TujuanPembelajaran: React.FC = () => {
         `http://localhost:5000/Tujuanpembelajaran/${editData._id}`,
         {
           tingkat: editData.tingkat,
-          tujuan: editData.tujuan,
+          lingkup_materi: editData.lingkup_materi,
         }
       );
       setData((prev) =>
@@ -143,13 +162,26 @@ const TujuanPembelajaran: React.FC = () => {
       </Row>
 
       {/* Tabel responsif */}
-      <div style={{ overflowX: "auto" }}>
-        <Table striped bordered hover>
+      <div
+        className="responsive-table"
+        style={{
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+          // opsional styling scrollbar agar lebih tipis (khusus Firefox)
+          scrollbarWidth: "thin",
+        }}
+      >
+        <Table
+          striped
+          bordered
+          hover
+          style={{ tableLayout: "fixed", minWidth: 600, width: "100%" }}
+        >
           <thead>
             <tr>
               <th style={{ minWidth: 40 }}>NO</th>
               <th style={{ minWidth: 100 }}>TINGKAT</th>
-              <th style={{ minWidth: 200 }}>TUJUAN PEMBELAJARAN</th>
+              <th style={{ minWidth: 200 }}>Tujuan Pembelajaran</th>
               <th style={{ minWidth: 120 }}>AKSI</th>
             </tr>
           </thead>
@@ -165,7 +197,7 @@ const TujuanPembelajaran: React.FC = () => {
                 <tr key={item._id}>
                   <td>{idx + 1}</td>
                   <td>{item.tingkat}</td>
-                  <td>{item.tujuan_pembelajaran}</td>
+                  <td>{item.lingkup_materi}</td>
                   <td>
                     <Button
                       variant="warning"
@@ -194,7 +226,7 @@ const TujuanPembelajaran: React.FC = () => {
       <Modal show={showEdit} onHide={handleEditClose} centered>
         <Form onSubmit={handleEditSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>Edit Tujuan Pembelajaran</Modal.Title>
+            <Modal.Title>Edit Lingkup Materi</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form.Group className="mb-3" controlId="formEditTingkat">
@@ -216,10 +248,10 @@ const TujuanPembelajaran: React.FC = () => {
               <Form.Control
                 as="textarea"
                 rows={3}
-                value={editData?.tujuan || ""}
+                value={editData?.lingkup_materi || ""}
                 onChange={(e) =>
                   setEditData((prev) =>
-                    prev ? { ...prev, tujuan: e.target.value } : prev
+                    prev ? { ...prev, lingkup_materi: e.target.value } : prev
                   )
                 }
                 required

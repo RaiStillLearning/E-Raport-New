@@ -24,6 +24,7 @@ import RegisterPage from "./LoginForm/Register/Register";
 import PesertaDidik from "./pages/guru/PesertaDidik";
 import TujuanPembelajaran from "./pages/guru/TujuanPembelajaran";
 import LingkupMateri from "./pages/guru/LingkupMateri";
+import AsesmenSumatif from "./pages/guru/AsesmenSumatif";
 
 function App() {
   const location = useLocation();
@@ -62,6 +63,7 @@ function App() {
                 element={<TujuanPembelajaran />}
               />
               <Route path="lingkup-materi" element={<LingkupMateri/>}/>
+              <Route path="asesmen-sumatif" element={<AsesmenSumatif/>}/>
             </Route>
           )}
 
