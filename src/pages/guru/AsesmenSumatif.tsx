@@ -80,7 +80,7 @@ const AsesmenSumatif: React.FC = () => {
           <option value="XI">XI</option>
           <option value="XII">XII</option>
         </select>
-        <button className="btn btn-primary" onClick={handleAddRow}>
+        <button className="btn btn-success" onClick={handleAddRow}>
           Tambah
         </button>
       </div>
