@@ -1,5 +1,5 @@
 // App.jsx
-import React, { useState, useContext } from "react";
+import { useContext } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -10,7 +10,6 @@ import {
 } from "react-router-dom";
 
 import NavbarComponent from "./components/navbar";
-import Sidebar from "./components/Sidebar";
 import { UserContext, UserProvider } from "./context/UserContext";
 
 // Layout
