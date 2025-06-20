@@ -200,3 +200,28 @@ html, body {
     border-bottom: 0;
   }
 }
+
+
+/* responsif tujuan pembelajaran */
+/* Tambahan scroll halus dan layout tabel */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin; /* Firefox */
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+/* Responsif tombol aksi di kolom tabel */
+@media (max-width: 576px) {
+  .custom-table-wrapper td .btn {
+    width: 100%;
+  }
+}

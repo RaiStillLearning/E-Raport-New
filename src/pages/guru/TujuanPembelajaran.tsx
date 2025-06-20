@@ -74,7 +74,7 @@ const TujuanPembelajaran: React.FC = () => {
     try {
       const res = await axios.post("http://localhost:5000/Tujuanpembelajaran", {
         tingkat: newTingkat,
-        lingkup_materi: newTujuan,
+        tujuan_pembelajaran: newTujuan,
       });
       setData((prev) => [...prev, res.data.data || res.data]);
       setNewTingkat("");
@@ -121,7 +121,7 @@ const TujuanPembelajaran: React.FC = () => {
         `http://localhost:5000/Tujuanpembelajaran/${editData._id}`,
         {
           tingkat: editData.tingkat,
-          lingkup_materi: editData.lingkup_materi,
+          tujuan_pembelajaran: editData.tujuan_pembelajaran,
         }
       );
       setData((prev) =>
@@ -149,78 +149,67 @@ const TujuanPembelajaran: React.FC = () => {
 
   return (
     <Container fluid className="p-3">
-      {/* Baris tombol tambah */}
-      <Row className="mb-3 align-items-center">
-        <Col xs={8} sm={10}>
-          <h3 className="m-0">Tujuan Pembelajaran</h3>
-        </Col>
-        <Col xs={4} sm={2} className="text-end">
-          <Button size="sm" onClick={() => setShowAdd(true)}>
-            + Tambah
-          </Button>
-        </Col>
-      </Row>
+       {/* Baris tombol tambah */}
+  <Row className="mb-3 align-items-center">
+    <Col xs={12} sm={10} className="text-center text-sm-start mb-2 mb-sm-0">
+      <h3 className="m-0">Tujuan Pembelajaran</h3>
+    </Col>
+    <Col xs={12} sm={2} className="text-center text-sm-end">
+      <Button size="sm" onClick={() => setShowAdd(true)}>
+        + Tambah
+      </Button>
+    </Col>
+  </Row>
 
-      {/* Tabel responsif */}
-      <div
-        className="responsive-table"
-        style={{
-          overflowX: "auto",
-          WebkitOverflowScrolling: "touch",
-          // opsional styling scrollbar agar lebih tipis (khusus Firefox)
-          scrollbarWidth: "thin",
-        }}
-      >
-        <Table
-          striped
-          bordered
-          hover
-          style={{ tableLayout: "fixed", minWidth: 600, width: "100%" }}
-        >
-          <thead>
-            <tr>
-              <th style={{ minWidth: 40 }}>NO</th>
-              <th style={{ minWidth: 100 }}>TINGKAT</th>
-              <th style={{ minWidth: 200 }}>Tujuan Pembelajaran</th>
-              <th style={{ minWidth: 120 }}>AKSI</th>
+  {/* Tabel responsif */}
+  <div className="table-responsive custom-table-wrapper">
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>NO</th>
+          <th>TINGKAT</th>
+          <th>Tujuan Pembelajaran</th>
+          <th>AKSI</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.length === 0 ? (
+          <tr>
+            <td colSpan={4} className="text-center">
+              Data kosong
+            </td>
+          </tr>
+        ) : (
+          data.map((item, idx) => (
+            <tr key={item._id}>
+              <td>{idx + 1}</td>
+              <td>{item.tingkat}</td>
+              <td>{item.tujuan_pembelajaran}</td>
+              <td>
+                <div className="d-flex flex-wrap gap-2">
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={() => handleEditOpen(item)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(item._id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-center">
-                  Data kosong
-                </td>
-              </tr>
-            ) : (
-              data.map((item, idx) => (
-                <tr key={item._id}>
-                  <td>{idx + 1}</td>
-                  <td>{item.tingkat}</td>
-                  <td>{item.lingkup_materi}</td>
-                  <td>
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      className="me-2"
-                      onClick={() => handleEditOpen(item)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      </div>
+          ))
+        )}
+      </tbody>
+    </Table>
+  </div>
+
 
       {/* Modal Edit */}
       <Modal show={showEdit} onHide={handleEditClose} centered>
@@ -248,10 +237,10 @@ const TujuanPembelajaran: React.FC = () => {
               <Form.Control
                 as="textarea"
                 rows={3}
-                value={editData?.lingkup_materi || ""}
+                value={editData?.tujuan_pembelajaran || ""}
                 onChange={(e) =>
                   setEditData((prev) =>
-                    prev ? { ...prev, lingkup_materi: e.target.value } : prev
+                    prev ? { ...prev, tujuan_pembelajaran: e.target.value } : prev
                   )
                 }
                 required
