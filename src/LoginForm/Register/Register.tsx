@@ -45,6 +45,8 @@ const RegisterPage: React.FC = () => {
         tahunPelajaran: formState.tahunPelajaran,
         rememberMe: formState.rememberMe,
       });
+        console.log(response)
+
 
       // Bisa kamu arahkan ke login atau halaman lain
       navigate("/login");
