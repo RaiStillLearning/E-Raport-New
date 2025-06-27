@@ -25,7 +25,6 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Ambil setUserRole dari UserContext dengan benar (di dalam komponen)
   const { setUserRole } = useContext(UserContext);
 
   const handleInputChange = (e: React.ChangeEvent<any>) => {
@@ -77,7 +76,8 @@ const LoginPage: React.FC = () => {
         className="shadow rounded w-100 mx-2 mx-md-5 overflow-hidden"
         style={{ maxWidth: "900px" }}
       >
-        <Col xs={12} md={6} className="p-0">
+        {/* Gambar pada layar besar */}
+        <Col xs={12} md={6} className="p-0 d-none d-md-block">
           <img
             src="/src/assets/login-form.png"
             alt="Login Visual"
@@ -85,6 +85,7 @@ const LoginPage: React.FC = () => {
           />
         </Col>
 
+        {/* Form Login */}
         <Col xs={12} md={6} className="bg-white p-4">
           <h3 className="mb-4 text-center">Login E-Rapor</h3>
           <Form onSubmit={handleSubmit}>

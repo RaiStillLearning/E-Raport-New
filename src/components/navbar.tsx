@@ -49,7 +49,7 @@ const NavbarComponent = () => {
             <Nav.Link
               href="#kontak"
               onClick={() => setActiveLink}
-              className={activeLink === "kontak" ? "nav-kontak" : ""}
+              className={activeLink === "kontak" ? "nav-kontak" : " "}
             >
               <BsFillPersonLinesFill className="me-2" />
               Kontak

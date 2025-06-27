@@ -186,23 +186,24 @@ const TujuanPembelajaran: React.FC = () => {
               <td>{item.tingkat}</td>
               <td>{item.tujuan_pembelajaran}</td>
               <td>
-                <div className="d-flex flex-wrap gap-2">
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    onClick={() => handleEditOpen(item)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDelete(item._id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </td>
+  <div className="d-grid d-sm-flex gap-2">
+     <Button
+                          variant="warning"
+                          size="sm"
+                          className="me-2"
+                          onClick={() => handleEditOpen(item)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDelete(item._id)}
+                        >
+                          Delete
+                        </Button>
+  </div>
+</td>
             </tr>
           ))
         )}

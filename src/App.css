@@ -203,13 +203,14 @@ html, body {
 
 
 /* responsif tujuan pembelajaran */
-/* Tambahan scroll halus dan layout tabel */
+/* Tabel Responsif (Besar) */
 .table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin; /* Firefox */
+  overflow-x: auto; /* Untuk memungkinkan scroll horizontal pada layar kecil */
+  -webkit-overflow-scrolling: touch; /* Agar scroll lebih halus di iOS */
+  scrollbar-width: thin; /* Firefox: untuk scroll bar lebih kecil */
 }
 
+/* Custom scroll bar untuk tabel */
 .table-responsive::-webkit-scrollbar {
   height: 6px;
 }
@@ -219,9 +220,128 @@ html, body {
   border-radius: 4px;
 }
 
+/* Tabel yang bisa melebar di layar besar */
+@media (min-width: 769px) {
+  .table-responsive table {
+    width: 100%; /* Membuat tabel mengisi seluruh lebar layar */
+    table-layout: fixed; /* Menghindari elemen tabel yang melebihi batas */
+  }
+
+  .table-responsive th,
+  .table-responsive td {
+    padding: 12px; /* Memberikan padding yang cukup agar konten terlihat jelas */
+  }
+}
+
+/* Responsif untuk layar kecil */
+@media (max-width: 768px) {
+  .table-responsive table {
+    width: 100%; /* Pastikan tabel tetap 100% pada layar kecil */
+  }
+
+  .table-responsive td {
+    text-align: left;
+    display: block; /* Membuat kolom menjadi blok untuk tampilan mobile */
+    width: 100%;
+    padding-left: 50%; /* Memberikan space untuk label data */
+  }
+
+  .table-responsive td::before {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-weight: bold;
+    content: attr(data-label);
+  }
+}
+
+
 /* Responsif tombol aksi di kolom tabel */
 @media (max-width: 576px) {
   .custom-table-wrapper td .btn {
     width: 100%;
+    margin-bottom: 10px; /* Memberikan jarak antar tombol */
+    padding: 10px; /* Tambah padding agar tombol lebih nyaman di klik */
+  }
+}
+
+
+
+/* tujuan pembelajaran responsif code  */
+/* Membuat tombol tidak terlalu rapat dan menjaga spacing */
+.custom-table-wrapper .btn {
+  min-width: 75px;
+}
+
+/* Wrap text agar tidak overflow */
+.custom-table-wrapper td {
+  white-space: normal !important;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+
+/* Perbaiki overflow horizontal jika ada konten panjang */
+.custom-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* Sidebar responsif */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 999; /* Agar sidebar tetap di atas konten */
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .toggle-button {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .sidebar {
+    position: static;
+    transform: none;
+    z-index: 0; /* Mengembalikan z-index untuk tampilan desktop */
+  }
+
+  .toggle-button {
+    display: none;
+  }
+}
+
+/* asesmen sumatif responsif  */
+/* Menjamin bahwa table-wrapper dapat melebar sesuai ukuran layar */
+.responsive-table-wrapper {
+  overflow-x: auto;  /* Scrollable jika tabel lebih besar dari layar */
+  width: 100%;       /* Pastikan tabel mengisi 100% lebar */
+}
+
+/* Pastikan tabel mengisi seluruh lebar dan berfungsi di perangkat besar */
+.table {
+  width: 100%;
+  table-layout: fixed;  /* Mencegah kolom melebar melebihi ukuran layar */
+}
+
+.table th, .table td {
+  padding: 10px; /* Menambahkan padding agar kolom lebih nyaman dilihat */
+  text-align: center;
+}
+
+/* Untuk tampilan layar lebih kecil dari 768px */
+@media (max-width: 768px) {
+  .table th, .table td {
+    font-size: 12px; /* Mengurangi ukuran font untuk tampilan kecil */
+  }
+  .table input {
+    font-size: 12px;  /* Mengurangi ukuran font pada input */
   }
 }

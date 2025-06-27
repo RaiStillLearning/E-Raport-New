@@ -1,28 +1,35 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { Button, Nav, Collapse } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
+import { FaBars, FaBook, FaUserCog, FaChartBar } from "react-icons/fa";
 import Logo from "../assets/logo-ghamcak.png";
 
-const Sidebar = () => {
+const Sidebar = ({ children }) => {
   const { userRole } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(() => {
     const saved = localStorage.getItem("sidebarIsOpen");
-    if (saved !== null) return JSON.parse(saved);
-    return window.innerWidth >= 768;
+    return saved !== null ? JSON.parse(saved) : window.innerWidth >= 768;
   });
-  const [isMobile, setIsMobile] = useState(false);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownRefrensiOpen, setDropdownRefrensiOpen] = useState(false);
-  const [dropdownNilaiiOpen, setDropdownNilaiOpen] = useState(false);
+  const [dropdownNilaiOpen, setDropdownNilaiOpen] = useState(false);
 
   const location = useLocation();
 
   if (!userRole) return null;
 
   useEffect(() => {
-    const mobile = window.innerWidth < 768;
-    setIsMobile(mobile);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const toggleSidebar = () => {
@@ -56,6 +63,7 @@ const Sidebar = () => {
 
   return (
     <>
+      {/* Sidebar */}
       <div
         style={{
           position: "fixed",
@@ -87,10 +95,9 @@ const Sidebar = () => {
                     as={Link}
                     to={item.path}
                     key={item.path}
+                    active={location.pathname === item.path}
                     onClick={() => isMobile && setIsOpen(false)}
-                    className={`text-white mb-2 ${
-                      location.pathname === item.path ? "fw-bold" : ""
-                    }`}
+                    className="text-white mb-2"
                   >
                     {item.name}
                   </Nav.Link>
@@ -104,7 +111,7 @@ const Sidebar = () => {
                   aria-controls="refrensi-collapse"
                   aria-expanded={dropdownRefrensiOpen}
                 >
-                  📚 Refrensi ▼
+                  <FaBook className="me-2" /> Refrensi ▼
                 </Button>
                 <Collapse in={dropdownRefrensiOpen}>
                   <div id="refrensi-collapse">
@@ -115,6 +122,7 @@ const Sidebar = () => {
                         key={item.path}
                         onClick={() => isMobile && setIsOpen(false)}
                         className="text-white ms-3 mb-2"
+                        active={location.pathname === item.path}
                       >
                         {item.name}
                       </Nav.Link>
@@ -126,13 +134,13 @@ const Sidebar = () => {
                 <Button
                   variant="link"
                   className="text-white text-start"
-                  onClick={() => setDropdownNilaiOpen(!dropdownNilaiiOpen)}
+                  onClick={() => setDropdownNilaiOpen(!dropdownNilaiOpen)}
                   aria-controls="nilai-collapse"
-                  aria-expanded={dropdownNilaiiOpen}
+                  aria-expanded={dropdownNilaiOpen}
                 >
-                  📊 Nilai ▼
+                  <FaChartBar className="me-2" /> Nilai ▼
                 </Button>
-                <Collapse in={dropdownNilaiiOpen}>
+                <Collapse in={dropdownNilaiOpen}>
                   <div id="nilai-collapse">
                     {dropdownNilaiItems.map((item) => (
                       <Nav.Link
@@ -141,6 +149,7 @@ const Sidebar = () => {
                         key={item.path}
                         onClick={() => isMobile && setIsOpen(false)}
                         className="text-white ms-3 mb-2"
+                        active={location.pathname === item.path}
                       >
                         {item.name}
                       </Nav.Link>
@@ -156,7 +165,7 @@ const Sidebar = () => {
                   aria-controls="dropdown-collapse"
                   aria-expanded={dropdownOpen}
                 >
-                  ⚙️ Pengguna ▼
+                  <FaUserCog className="me-2" /> Pengguna ▼
                 </Button>
                 <Collapse in={dropdownOpen}>
                   <div id="dropdown-collapse">
@@ -167,6 +176,7 @@ const Sidebar = () => {
                         key={item.path}
                         onClick={() => isMobile && setIsOpen(false)}
                         className="text-white ms-3 mb-2"
+                        active={location.pathname === item.path}
                       >
                         {item.name}
                       </Nav.Link>
@@ -178,6 +188,7 @@ const Sidebar = () => {
           )}
         </div>
 
+        {/* Toggle Button */}
         <div
           style={{
             width: toggleWidth,
@@ -194,18 +205,21 @@ const Sidebar = () => {
             style={{ padding: 0, width: "30px", height: "30px" }}
             aria-label="Toggle Sidebar"
           >
-            ☰
+            <FaBars />
           </Button>
         </div>
       </div>
 
+      {/* Content Wrapper */}
       <div
         style={{
           marginLeft: isOpen ? sidebarWidth + toggleWidth : toggleWidth,
           transition: "margin-left 0.3s ease-in-out",
           padding: "1rem",
         }}
-      />
+      >
+        {children}
+      </div>
     </>
   );
 };

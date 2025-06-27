@@ -34,38 +34,51 @@ const AsesmenSumatif: React.FC = () => {
     fetchData(kelas);
   }, [kelas]);
 
- const handleAddRow = async () => {
-  const newRow: Partial<SiswaData> = {
-    nama_siswa: 'Siswa Baru', // <- Ganti dari 'masukkan nama siswa' ke string yang valid
-    sumatif1: 0,
-    sumatif2: 0,
-    sumatif3: 0,
-    pts: 0,
-    pas: 0,
-    kelas,
-  };
+  const handleChange = async (index: number, field: keyof SiswaData, value: string) => {
+  const updatedValue = ['sumatif1', 'sumatif2', 'sumatif3', 'pts', 'pas'].includes(field)
+    ? Number(value) || 0
+    : value;
+
+  const updatedRow = { ...data[index], [field]: updatedValue };
+  const updatedData = [...data];
+  updatedData[index] = updatedRow;
+  setData(updatedData); // ⬅️ ini harus dipanggil dengan updated clone
 
   try {
-    const response = await axios.post('http://localhost:5000/AsesmenSumatif', newRow);
-    if (response.status === 201 || response.status === 200) {
-      await fetchData(kelas);
+    if (updatedRow._id) {
+      // PATCH jika data sudah ada (_id tersedia)
+      await axios.patch(`http://localhost:5000/AsesmenSumatif/${updatedRow._id}`, updatedRow);
+    } else {
+      // POST jika data belum punya _id
+      const res = await axios.post(`http://localhost:5000/AsesmenSumatif`, updatedRow);
+      updatedData[index]._id = res.data._id;
+      setData([...updatedData]); // simpan ulang biar _id ke-save
     }
-  } catch (error: any) {
-    console.error('Gagal mengirim data:', error);
-    alert('Gagal tambah data, coba lagi.\n' + (error?.response?.data?.message || ''));
+  } catch (err: any) {
+    console.error("Update gagal:", err.response?.data || err.message);
   }
 };
 
 
-  const handleChange = (index: number, field: keyof SiswaData, value: string) => {
-    setData((prev) => {
-      const updated = [...prev];
-      const updatedValue = ['sumatif1', 'sumatif2', 'sumatif3', 'pts', 'pas'].includes(field)
-        ? Number(value)
-        : value;
-      updated[index] = { ...updated[index], [field]: updatedValue };
-      return updated;
-    });
+  const handleAddRow = async () => {
+    const newRow: Partial<SiswaData> = {
+      nama_siswa: 'Siswa Baru',
+      sumatif1: 0,
+      sumatif2: 0,
+      sumatif3: 0,
+      pts: 0,
+      pas: 0,
+      kelas,
+    };
+
+    try {
+      const response = await axios.post('http://localhost:5000/AsesmenSumatif', newRow);
+      if (response.status === 201 || response.status === 200) {
+        await fetchData(kelas); // refresh data
+      }
+    } catch (error: any) {
+      console.error('Gagal tambah data:', error);
+    }
   };
 
   return (
@@ -85,110 +98,101 @@ const AsesmenSumatif: React.FC = () => {
         </button>
       </div>
 
-      <div className="responsive-table-wrapper">
-        {loading ? (
-          <p>Loading data...</p>
-        ) : (
-          <table className="table table-bordered text-center align-middle w-100">
-            <thead className="table-light">
+      {loading ? (
+        <p>Loading data...</p>
+      ) : (
+        <table className="table table-bordered text-center align-middle w-100">
+          <thead className="table-light">
+            <tr>
+              <th rowSpan={2}>No.</th>
+              <th rowSpan={2}>Nama Siswa</th>
+              <th colSpan={3}>Sumatif Akhir Lingkup Materi (Wajib)</th>
+              <th rowSpan={2}>NA Lingkup (70%)</th>
+              <th colSpan={3}>Sumatif PTS/PAS</th>
+              <th rowSpan={2}>Nilai Rapor</th>
+            </tr>
+            <tr>
+              <th>Sumatif 1</th>
+              <th>Sumatif 2</th>
+              <th>Sumatif 3</th>
+              <th>PTS (10%)</th>
+              <th>PAS (20%)</th>
+              <th>JML</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.length === 0 ? (
               <tr>
-                <th rowSpan={2}>No.</th>
-                <th rowSpan={2}>Nama Siswa</th>
-                <th colSpan={3}>Sumatif Akhir Lingkup Materi (Wajib)</th>
-                <th rowSpan={2}>NA Lingkup (70%)</th>
-                <th colSpan={3}>Sumatif PTS/PAS</th>
-                <th rowSpan={2}>Nilai Rapor</th>
+                <td colSpan={10}>Belum ada data</td>
               </tr>
-              <tr>
-                <th>Sumatif 1</th>
-                <th>Sumatif 2</th>
-                <th>Sumatif 3</th>
-                <th>PTS (10%)</th>
-                <th>PAS (20%)</th>
-                <th>JML</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.length === 0 ? (
-                <tr>
-                  <td colSpan={10}>Belum ada data</td>
-                </tr>
-              ) : (
-                data.map((row, i) => {
-                  const s1 = row.sumatif1 || 0;
-                  const s2 = row.sumatif2 || 0;
-                  const s3 = row.sumatif3 || 0;
-                  const pts = row.pts || 0;
-                  const pas = row.pas || 0;
+            ) : (
+              data.map((row, i) => {
+                const { sumatif1 = 0, sumatif2 = 0, sumatif3 = 0, pts = 0, pas = 0 } = row;
+                const na = ((sumatif1 + sumatif2 + sumatif3) / 3) * 0.7;
+                const jml = pts * 0.1 + pas * 0.2;
+                const nilaiRapor = na + jml;
 
-                  const na = ((s1 + s2 + s3) / 3) * 0.7;
-                  const ptsScore = pts * 0.1;
-                  const pasScore = pas * 0.2;
-                  const jml = ptsScore + pasScore;
-                  const nilaiRapor = na + jml;
-
-                  return (
-                    <tr key={row._id || `${i}-${kelas}`}>
-                      <td>{i + 1}</td>
-                      <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={row.nama_siswa}
-                          onChange={(e) => handleChange(i, 'nama_siswa', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={row.sumatif1}
-                          onChange={(e) => handleChange(i, 'sumatif1', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={row.sumatif2}
-                          onChange={(e) => handleChange(i, 'sumatif2', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={row.sumatif3}
-                          onChange={(e) => handleChange(i, 'sumatif3', e.target.value)}
-                        />
-                      </td>
-                      <td>{na.toFixed(2)}</td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={row.pts}
-                          onChange={(e) => handleChange(i, 'pts', e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={row.pas}
-                          onChange={(e) => handleChange(i, 'pas', e.target.value)}
-                        />
-                      </td>
-                      <td>{jml.toFixed(2)}</td>
-                      <td>{nilaiRapor.toFixed(2)}</td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        )}
-      </div>
+                return (
+                  <tr key={row._id || i}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={row.nama_siswa}
+                        onChange={(e) => handleChange(i, 'nama_siswa', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={sumatif1}
+                        onChange={(e) => handleChange(i, 'sumatif1', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={sumatif2}
+                        onChange={(e) => handleChange(i, 'sumatif2', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={sumatif3}
+                        onChange={(e) => handleChange(i, 'sumatif3', e.target.value)}
+                      />
+                    </td>
+                    <td>{na.toFixed(2)}</td>
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={pts}
+                        onChange={(e) => handleChange(i, 'pts', e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={pas}
+                        onChange={(e) => handleChange(i, 'pas', e.target.value)}
+                      />
+                    </td>
+                    <td>{jml.toFixed(2)}</td>
+                    <td>{nilaiRapor.toFixed(2)}</td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
