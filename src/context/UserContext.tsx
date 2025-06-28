@@ -1,3 +1,4 @@
+// context/UserContext.tsx
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
@@ -17,8 +18,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [userRole, setUserRole] = useState<string>("guest");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Fungsi untuk fetch role dari backend
   const fetchUserRole = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -29,9 +30,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const response = await axios.get("http://localhost:5000/users", {
         headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       });
 
-      if (response.data && response.data.role) {
+      if (response.data?.role) {
         setUserRole(response.data.role);
         localStorage.setItem("role", response.data.role);
       } else {
@@ -40,6 +42,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error("Gagal fetch user role:", error);
       setUserRole("guest");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -49,7 +53,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <UserContext.Provider value={{ userRole, setUserRole, fetchUserRole }}>
-      {children}
+      {!isLoading ? children : <div>Loading...</div>}
     </UserContext.Provider>
   );
 };
