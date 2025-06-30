@@ -162,7 +162,7 @@ const TujuanPembelajaran: React.FC = () => {
   </Row>
 
   {/* Tabel responsif */}
-  <div className="table-responsive custom-table-wrapper">
+  <div className="table-responsive" style={{overflowX: "auto", display: "block"}}>
     <Table striped bordered hover>
       <thead>
         <tr>
@@ -184,7 +184,7 @@ const TujuanPembelajaran: React.FC = () => {
             <tr key={item._id}>
               <td>{idx + 1}</td>
               <td>{item.tingkat}</td>
-              <td>{item.tujuan_pembelajaran}</td>
+              <td style={{whiteSpace:"pre-wrap", wordBreak: "break-word", maxWidth: "300px"}}>{item.tujuan_pembelajaran}</td>
               <td>
   <div className="d-grid d-sm-flex gap-2">
      <Button

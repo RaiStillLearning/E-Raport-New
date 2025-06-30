@@ -197,7 +197,7 @@ const LingkupMateri: React.FC = () => {
                 <tr key={item._id}>
                   <td>{idx + 1}</td>
                   <td>{item.tingkat}</td>
-                  <td>{item.lingkup_materi}</td>
+                  <td style={{whiteSpace:"pre-wrap", wordBreak: "break-word", maxWidth: "300px"}}>{item.lingkup_materi}</td>
                   <td>
                     <Button
                       variant="warning"

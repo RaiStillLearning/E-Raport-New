@@ -40,18 +40,15 @@ const Sidebar = ({ children }) => {
   };
 
   const menuItems = [{ name: "Beranda", path: "/guru/beranda" }];
-
   const dropdownItems = [
     { name: "Profil Saya", path: "/profil" },
     { name: "Pengaturan", path: "/pengaturan" },
   ];
-
   const dropdownRefrensiItems = [
     { name: "Peserta Didik", path: "/guru/pesertadidik" },
     { name: "Tujuan Pembelajaran", path: "/guru/tujuanPembelajaran" },
     { name: "Lingkup Materi", path: "/guru/lingkup-materi" },
   ];
-
   const dropdownNilaiItems = [
     { name: "Asesmen Sumatif", path: "/guru/asesmen-sumatif" },
     { name: "Asesmen Formatif", path: "/guru/asesmen-formatif" },
@@ -63,7 +60,7 @@ const Sidebar = ({ children }) => {
 
   return (
     <>
-      {/* Sidebar */}
+      {/* Sidebar dan Toggle */}
       <div
         style={{
           position: "fixed",
@@ -74,6 +71,7 @@ const Sidebar = ({ children }) => {
           zIndex: 1040,
         }}
       >
+        {/* Sidebar */}
         <div
           className="bg-dark text-white p-3"
           style={{
@@ -82,6 +80,7 @@ const Sidebar = ({ children }) => {
             transition: "width 0.3s ease-in-out",
           }}
         >
+          {/* Sidebar Content */}
           {isOpen && (
             <>
               <div className="text-center mb-4">
@@ -188,7 +187,7 @@ const Sidebar = ({ children }) => {
           )}
         </div>
 
-        {/* Toggle Button */}
+        {/* Toggle Button (Selalu Tampil) */}
         <div
           style={{
             width: toggleWidth,
@@ -210,7 +209,7 @@ const Sidebar = ({ children }) => {
         </div>
       </div>
 
-      {/* Content Wrapper */}
+      {/* Content */}
       <div
         style={{
           marginLeft: isOpen ? sidebarWidth + toggleWidth : toggleWidth,
