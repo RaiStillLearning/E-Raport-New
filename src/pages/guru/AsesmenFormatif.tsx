@@ -1,6 +1,5 @@
-import  {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-
 
 interface SiswaFormatif {
   _id?: string;
@@ -16,44 +15,39 @@ interface SiswaFormatif {
   kelas: string;
 }
 
-
-
 const AsesmenFormatif = () => {
-    const [kelas, setKelas] = useState<string>('X');
-    const [data, setData] = useState<SiswaData[]>([]);
-    const [loading, setLoading] = useState(false);
+  const [kelas, setKelas] = useState<string>('X');
+  const [data, setData] = useState<SiswaFormatif[]>([]);
+  const [loading, setLoading] = useState(false);
 
-    const fetchData = async (kelasParam: string) => {
-        setLoading(true);
-        try {
-            const res = await axios.get(`http://localhost:5000/AsesmenFormatif?kelas=${kelasParam}`);
-            setData(res.data);
-
-        }
-        catch (err) {
-            console.log("error saat fetch data", err)
-            setData([]);
-
-        }
-        finally {
-            setLoading(false);
-        }
+  const fetchData = async (kelasParam: string) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`http://localhost:5000/AsesmenFormatif?kelas=${kelasParam}`);
+      setData(res.data);
+    } catch (err) {
+      console.log('Error saat fetch data', err);
+      setData([]);
+    } finally {
+      setLoading(false);
     }
-     useEffect(() => {
+  };
+
+  useEffect(() => {
     fetchData(kelas);
   }, [kelas]);
 
   const handleAddRow = async () => {
     const newRow: Partial<SiswaFormatif> = {
       nama_siswa: 'Siswa Baru',
-      tp1_kktp: '',
+      tp1_kktp: '0',
       tp1_tampil: false,
-      tp2_kktp: '',
+      tp2_kktp: '0',
       tp2_tampil: false,
-      tp3_kktp: '',
+      tp3_kktp: '0',
       tp3_tampil: false,
-      deskripsi_tertinggi: '',
-      deskripsi_terendah: '',
+      deskripsi_tertinggi: '0',
+      deskripsi_terendah: '0',
       kelas,
     };
 
@@ -76,21 +70,50 @@ const AsesmenFormatif = () => {
     });
   };
 
+  const handleUpdateRow = async (row: SiswaFormatif) => {
+    if (!row._id) return;
 
+    try {
+      const response = await axios.patch(`http://localhost:5000/AsesmenFormatif/${row._id}`, row);
+      if (response.status === 200) {
+        console.log('Berhasil update data');
+        await fetchData(kelas);
+      }
+    } catch (err) {
+      console.error('Gagal update data:', err);
+      alert('Gagal update data');
+    }
+  };
+
+  const handleDeleteRow = async (id: string | undefined) => {
+    if (!id) return;
+
+    const konfirmasi = confirm('Yakin ingin menghapus data ini?');
+    if (!konfirmasi) return;
+
+    try {
+      const response = await axios.delete(`http://localhost:5000/AsesmenFormatif/${id}`);
+      if (response.status === 200) {
+        console.log('Berhasil hapus data');
+        await fetchData(kelas);
+      }
+    } catch (err) {
+      console.error('Gagal hapus data:', err);
+      alert('Gagal hapus data');
+    }
+  };
 
   return (
     <div className="container mt-4">
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
-        <select
-          className="form-select w-auto"
-          value={kelas}
-          onChange={(e) => setKelas(e.target.value)}
-        >
+        <select className="form-select w-auto" value={kelas} onChange={(e) => setKelas(e.target.value)}>
           <option value="X">X</option>
           <option value="XI">XI</option>
           <option value="XII">XII</option>
         </select>
-        <button className="btn btn-success" onClick={handleAddRow}>Tambah</button>
+        <button className="btn btn-success" onClick={handleAddRow}>
+          Tambah
+        </button>
       </div>
 
       <div className="responsive-table-wrapper">
@@ -107,6 +130,7 @@ const AsesmenFormatif = () => {
                 <th colSpan={2}>TP 3</th>
                 <th rowSpan={2}>Deskripsi Tertinggi</th>
                 <th rowSpan={2}>Deskripsi Terendah</th>
+                <th rowSpan={2}>Aksi</th>
               </tr>
               <tr>
                 <th>KKTP</th>
@@ -119,7 +143,9 @@ const AsesmenFormatif = () => {
             </thead>
             <tbody>
               {data.length === 0 ? (
-                <tr><td colSpan={10}>Belum ada data</td></tr>
+                <tr>
+                  <td colSpan={11}>Belum ada data</td>
+                </tr>
               ) : (
                 data.map((row, i) => (
                   <tr key={row._id || `${i}-${kelas}`}>
@@ -193,6 +219,22 @@ const AsesmenFormatif = () => {
                         onChange={(e) => handleChange(i, 'deskripsi_terendah', e.target.value)}
                       />
                     </td>
+                    <td>
+                      <div className="d-flex gap-1 justify-content-center">
+                        <button
+                          className="btn btn-sm btn-primary"
+                          onClick={() => handleUpdateRow(row)}
+                        >
+                          Simpan
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDeleteRow(row._id)}
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -201,7 +243,7 @@ const AsesmenFormatif = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AsesmenFormatif
+export default AsesmenFormatif;
