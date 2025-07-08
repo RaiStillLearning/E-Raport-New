@@ -167,11 +167,20 @@ const AsesmenFormatif = () => {
                       />
                     </td>
                     <td>
-                      <input
-                        type="checkbox"
-                        checked={row.tp1_tampil}
-                        onChange={(e) => handleChange(i, 'tp1_tampil', e.target.checked)}
-                      />
+                     <input
+  type="checkbox"
+  checked={row.tp1_tampil}
+  onChange={async (e) => {
+    const checked = e.target.checked;
+    handleChange(i, 'tp1_tampil', checked);
+    if (row._id) {
+      await axios.patch(`http://localhost:5000/AsesmenFormatif/${row._id}`, {
+        tp1_tampil: checked,
+      });
+    }
+  }}
+/>
+
                     </td>
                     <td>
                       <input
@@ -182,11 +191,20 @@ const AsesmenFormatif = () => {
                       />
                     </td>
                     <td>
-                      <input
-                        type="checkbox"
-                        checked={row.tp2_tampil}
-                        onChange={(e) => handleChange(i, 'tp2_tampil', e.target.checked)}
-                      />
+                    <input
+  type="checkbox"
+  checked={row.tp2_tampil}
+  onChange={async (e) => {
+    const checked = e.target.checked;
+    handleChange(i, 'tp2_tampil', checked);
+    if (row._id) {
+      await axios.patch(`http://localhost:5000/AsesmenFormatif/${row._id}`, {
+        tp2_tampil: checked,
+      });
+    }
+  }}
+/>
+
                     </td>
                     <td>
                       <input
@@ -198,27 +216,37 @@ const AsesmenFormatif = () => {
                     </td>
                     <td>
                       <input
-                        type="checkbox"
-                        checked={row.tp3_tampil}
-                        onChange={(e) => handleChange(i, 'tp3_tampil', e.target.checked)}
-                      />
+  type="checkbox"
+  checked={row.tp3_tampil}
+  onChange={async (e) => {
+    const checked = e.target.checked;
+    handleChange(i, 'tp3_tampil', checked);
+    if (row._id) {
+      await axios.patch(`http://localhost:5000/AsesmenFormatif/${row._id}`, {
+        tp3_tampil: checked,
+      });
+    }
+  }}
+/>
+
                     </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={row.deskripsi_tertinggi}
-                        onChange={(e) => handleChange(i, 'deskripsi_tertinggi', e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={row.deskripsi_terendah}
-                        onChange={(e) => handleChange(i, 'deskripsi_terendah', e.target.value)}
-                      />
-                    </td>
+                  <td>
+  <textarea
+    className="form-control"
+    style={{ minWidth: '200px', minHeight: '60px', resize: 'vertical', overflowY: 'auto' }}
+    value={row.deskripsi_tertinggi}
+    onChange={(e) => handleChange(i, 'deskripsi_tertinggi', e.target.value)}
+  />
+</td>
+<td>
+  <textarea
+    className="form-control"
+    style={{ minWidth: '200px', minHeight: '60px', resize: 'vertical', overflowY: 'auto' }}
+    value={row.deskripsi_terendah}
+    onChange={(e) => handleChange(i, 'deskripsi_terendah', e.target.value)}
+  />
+</td>
+
                     <td>
                       <div className="d-flex gap-1 justify-content-center">
                         <button
